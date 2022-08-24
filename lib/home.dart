@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:reply/model/router_provider.dart';
+import 'package:animations/animations.dart';
 
 import 'bottom_drawer.dart';
 import 'colors.dart';
@@ -731,10 +732,21 @@ class _ReplyFabState extends State<_ReplyFab>
         final tooltip = onMailView ? 'Reply' : 'Compose';
 
         // TODO: Add Container Transform from FAB to compose email page (Motion)
-        return Material(
-          color: theme.colorScheme.secondary,
-          shape: circleFabBorder,
-          child: Tooltip(
+        return OpenContainer(
+          openBuilder: (context, closedContainer) {
+            return const ComposePage();
+          },
+          openColor: theme.cardColor,
+          onClosed: (success) {
+            Provider.of<EmailStore>(
+              context,
+              listen: false,
+            ).onCompose = false;
+          },
+          closedShape: circleFabBorder,
+          closedColor: theme.colorScheme.secondary,
+          closedElevation: 6,
+          closedBuilder: (context, openContainer) => Tooltip(
             message: tooltip,
             child: InkWell(
               customBorder: circleFabBorder,
@@ -743,18 +755,7 @@ class _ReplyFabState extends State<_ReplyFab>
                   context,
                   listen: false,
                 ).onCompose = true;
-
-                Navigator.of(context).push(
-                  PageRouteBuilder(
-                    pageBuilder: (
-                      BuildContext context,
-                      Animation<double> animation,
-                      Animation<double> secondaryAnimation,
-                    ) {
-                      return const ComposePage();
-                    },
-                  ),
-                );
+                openContainer();
               },
               child: SizedBox(
                 height: _mobileFabDimension,
