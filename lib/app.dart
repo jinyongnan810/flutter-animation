@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:reply/router.dart';
@@ -24,6 +25,7 @@ class _ReplyAppState extends State<ReplyApp> {
   void initState() {
     super.initState();
     _routerDelegate = ReplyRouterDelegate(replyState: _replyState);
+    timeDilation = 5.0;
   }
 
   @override
